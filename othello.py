@@ -44,7 +44,7 @@ class OthelloGame:
         """ Returns a copy of the current game's 2D board """
         return copy.deepcopy(self.current_board)
 
-    def _new_game_board(self, rows: int, cols: int, top_left: str) -> [[str]]:
+    def _new_game_board(self, rows: int, cols: int, top_left: str) -> list[list[str]]:
         """ Creates the Othello Game board with specified dimensions. """
         board = []
 
@@ -122,7 +122,7 @@ class OthelloGame:
 
         return last_cell_color == turn
 
-    def _adjacent_opposite_color_directions(self, row: int, col: int, turn: str) -> [tuple]:
+    def _adjacent_opposite_color_directions(self, row: int, col: int, turn: str) -> list[tuple[int, int]]:
         """ Looks up to a possible of 8 directions surrounding the given move. If any of the
             move's surrounding cells is the opposite color of the move itself, then record
             the direction it is in and store it in a list of tuples [(rowdelta, coldelta)].
@@ -148,7 +148,7 @@ class OthelloGame:
                 current_row += rowdelta
                 current_col += coldelta
 
-    def get_possible_move(self):
+    def get_possible_move(self) -> list[tuple[int, int]]:
         """ Looks at all the empty cells in the board and return possible moves """
         possible_move = []
         for row in range(self.rows):
@@ -195,7 +195,7 @@ class OthelloGame:
             cannot move at all. """
         self.turn = self._opposite_turn(self.turn)
 
-    def get_board(self) -> [[str]]:
+    def get_board(self) -> list[list[str]]:
         """ Returns the current game's 2D board """
         return self.current_board
 
@@ -220,7 +220,7 @@ class OthelloGame:
         else:
             return self.scores
 
-    def compute_scores(self) -> (int, int):
+    def compute_scores(self) -> tuple[int, int]:
         """ Returns the total cell count of the specified colored player """
         black = 0
         white = 0
