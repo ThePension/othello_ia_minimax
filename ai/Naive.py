@@ -8,7 +8,7 @@ from othello import OthelloGame
 import sys
 
 
-class ThePension:
+class Naive:
     '''The name of this class must be the same as its file.
     
     '''
@@ -29,7 +29,7 @@ class ThePension:
             tuple[int, int]: the next move (for instance: (2, 3) for (row, column), starting from 0)
         """
 
-        eval, move = self.alphabeta(State(game), 5, 1, 0)
+        eval, move = self.minimax(State(game), 3, 1)
 
         return move
 
@@ -89,30 +89,11 @@ class State:
     def ops(self) -> list[tuple[int, int]]:# -> list[list[list[str]]]:
         return self.game.get_possible_move()
 
-
-        # ops : list[list[list[str]]] = []
-
-        # legal_moves = self.game.get_possible_move()
-
-        # for legal_move in legal_moves:
-        #     row, col = legal_move
-
-        #     print("Current legal move" + str(legal_move))
-
-        #     ops.append(self.game.move(row, col, True))
-        #     self.game.switch_turn()
-
-        # return ops
-
-    def apply(self, op : list[list[str]]) -> ThePension:
-        new_game = self.game.copy_game() # deepcopy(self.game)
+    def apply(self, op : list[list[str]]) -> Naive:
+        new_game = self.game.copy_game()
 
         row, col = op
 
         new_game.move(row, col, False)
 
         return State(new_game)
-
-
-    
-

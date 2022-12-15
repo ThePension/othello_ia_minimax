@@ -14,7 +14,7 @@ DEFAULT_COLUMNS = 8
 BACKGROUND_COLOR = othello_models.BACKGROUND_COLOR
 GAME_HEIGHT = 400
 GAME_WIDTH = 400
-WAITING_TIME = 400 # adding a extra time in ms to see better the development
+WAITING_TIME = 10 # 400 # adding a extra time in ms to see better the development
 
 class OthelloGUI:
     def __init__(self):
@@ -22,13 +22,12 @@ class OthelloGUI:
         self._rows = DEFAULT_ROWS
         self._columns = DEFAULT_COLUMNS
         self._black_name = "ThePension"
-        self._white_name = "Random"
+        self._white_name = "Naive"
         self._white_ai = None
         self._black_ai = None
 
         # Create my othello gamestate here (drawn from the original othello game code)
-        self._game_state = othello.OthelloGame(self._rows, self._columns,
-                                               othello.BLACK)
+        self._game_state = othello.OthelloGame(self._rows, self._columns, othello.BLACK)
 
         # Initialize all my widgets and window here
         self._root_window = tkinter.Tk()
