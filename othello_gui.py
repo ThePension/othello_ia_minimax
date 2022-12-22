@@ -22,7 +22,7 @@ class OthelloGUI:
         self._rows = DEFAULT_ROWS
         self._columns = DEFAULT_COLUMNS
         self._black_name = "ThePension"
-        self._white_name = "Naive"
+        self._white_name = "Random"
         self._white_ai = None
         self._black_ai = None
 

@@ -33,9 +33,6 @@ class ThePension:
 
         return move
 
-
-        return random.choice(legal_moves)
-
     def minimax(self, root : State, depth : int, minOrMax : int) -> tuple[int, tuple[int, int]]:
         if depth == 0 or root.final():
             return root.eval(), None
@@ -80,10 +77,54 @@ class State:
         self.game = game
 
     def eval(self) -> int:
-        return self.game.get_scores()[0]
+        factor = self.game.get_scores()[0]
+        w, h = self.game.get_rows(), self.game.get_columns()
+        center_x = round(w / 2)
+        center_y = round(h / 2)
+
+        for x, y in self.ops():
+            shifted_x = x - center_x
+            shifted_y = y - center_y
+
+            # Prioritize side cells
+            factor += abs(center_x - x) + abs(center_y - y)
+
+            # Prioritize corners
+            if x == 0 or x == w or y == 0 or y == h:
+                factor += 10
+
+        board = self.game.get_board()
+
+        for x in range(0, w):
+            for y in range(0, h):
+                if board[x][y] == 'B':
+                    factor += State.get_cell_score(x, y, w, h)
+
+        # print("factor : " + str(factor))
+            
+        return factor # * self.game.get_scores()[0]
 
     def final(self):
         return self.game.is_game_over()
+
+    @staticmethod
+    def get_cell_score(x, y, w, h):
+        bonus = 20
+        score = 0
+        if x == 0 and y == 0:
+            score += bonus
+
+        if x == 0 and y == h:
+            score += bonus
+
+        if x == w and y == 0:
+            score += bonus
+
+        if x == w and y == h:
+            score += bonus
+
+        return score
+
     
     # Return a list boards with every legal move applied to the current board
     def ops(self) -> list[tuple[int, int]]:# -> list[list[list[str]]]:

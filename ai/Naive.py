@@ -33,9 +33,6 @@ class Naive:
 
         return move
 
-
-        return random.choice(legal_moves)
-
     def minimax(self, root : State, depth : int, minOrMax : int) -> tuple[int, tuple[int, int]]:
         if depth == 0 or root.final():
             return root.eval(), None
@@ -53,28 +50,6 @@ class Naive:
                 optOp = op
 
         return optVal, optOp
-
-    def alphabeta(self, root : State, depth : int, minOrMax : int, parentValue : int):
-        if depth == 0 or root.final():
-            return root.eval(), None
-
-        optVal = minOrMax * -100000
-        optOp = None
-
-        for op in root.ops():
-            new = root.apply(op)
-
-            val, dummy = self.alphabeta(new, depth - 1, -minOrMax, optVal)
-
-            if val * minOrMax > optVal * minOrMax:
-                optVal, optOp = val, op
-
-                if optVal * minOrMax > parentValue * minOrMax:
-                    break
-        
-        return optVal, optOp
-
-
 class State:
     def __init__(self, game : OthelloGame):
         self.game = game
@@ -86,7 +61,7 @@ class State:
         return self.game.is_game_over()
     
     # Return a list boards with every legal move applied to the current board
-    def ops(self) -> list[tuple[int, int]]:# -> list[list[list[str]]]:
+    def ops(self) -> list[tuple[int, int]]:
         return self.game.get_possible_move()
 
     def apply(self, op : list[list[str]]) -> Naive:
