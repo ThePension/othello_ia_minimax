@@ -76,6 +76,16 @@ class State:
     def __init__(self, game : OthelloGame):
         self.game = game
 
+        self.cells_score = [
+            [5, 4, 3, 3, 3, 3, 3, 4, 5],
+            [4, 4, 2, 2, 2, 2, 2, 4, 4],
+            [3, 2, 1, 1, 1, 1, 1, 2, 3],
+            [3, 2, 1, 1, 1, 1, 1, 2, 3],
+            [3, 2, 1, 1, 1, 1, 1, 2, 3],
+            [4, 4, 2, 2, 2, 2, 2, 4, 4],
+            [5, 4, 3, 3, 3, 3, 3, 4, 5],
+        ]
+
     def eval(self) -> int:
         factor = self.game.get_scores()[0]
         w, h = self.game.get_rows(), self.game.get_columns()
@@ -98,7 +108,7 @@ class State:
         for x in range(0, w):
             for y in range(0, h):
                 if board[x][y] == 'B':
-                    factor += State.get_cell_score(x, y, w, h)
+                    factor += self.get_cell_score(x, y, w, h)
 
         # print("factor : " + str(factor))
             
@@ -107,23 +117,24 @@ class State:
     def final(self):
         return self.game.is_game_over()
 
-    @staticmethod
-    def get_cell_score(x, y, w, h):
-        bonus = 20
-        score = 0
-        if x == 0 and y == 0:
-            score += bonus
+    def get_cell_score(self, x, y, w, h):
+        # bonus = 20
+        # score = 0
+        # if x == 0 and y == 0:
+        #     score += bonus
 
-        if x == 0 and y == h:
-            score += bonus
+        # if x == 0 and y == h:
+        #     score += bonus
 
-        if x == w and y == 0:
-            score += bonus
+        # if x == w and y == 0:
+        #     score += bonus
 
-        if x == w and y == h:
-            score += bonus
+        # if x == w and y == h:
+        #     score += bonus
 
-        return score
+        # return score
+
+        return self.cells_score[x][y] ** 2
 
     
     # Return a list boards with every legal move applied to the current board
