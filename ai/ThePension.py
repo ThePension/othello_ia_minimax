@@ -29,7 +29,7 @@ class ThePension:
             tuple[int, int]: the next move (for instance: (2, 3) for (row, column), starting from 0)
         """
 
-        eval, move = self.alphabeta(State(game, debug = False), 3, 1, 0)
+        eval, move = self.alphabeta(State(game, debug = False), 5, 1, 0)
 
         return move
 
@@ -60,10 +60,10 @@ class State:
         self.debug = debug
 
     def eval(self) -> int:
-        mobility = self.get_mobility_score(self.game)
-        coin_parity = self.get_coin_parity_score(self.game)
-        stability = self.get_stability_score(self.game)
-        corner_captured = self.get_corner_captures_score(self.game)
+        mobility = self.get_mobility_score(self.game) # Random
+        coin_parity = self.get_coin_parity_score(self.game) # Pas mal
+        stability = self.get_stability_score(self.game) # Vraiment pas mal
+        corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
         
         score = mobility + coin_parity + stability + corner_captured
         
@@ -103,14 +103,14 @@ class State:
     
     @staticmethod
     def get_mobility_score(game : OthelloGame):
-        min_player_moves = len(game.get_possible_move())
-        max_player_moves = len(State.get_possible_move(game, State.get_opponent(game)))
+        # min_player_moves = len(State.get_possible_move(game, State.get_opponent(game)))
+        # max_player_moves = len(State.get_possible_move(game, game.get_turn()))
         
-        # print("Max player moves: ", max_player_moves)
-        # print("Min player moves: ", min_player_moves)
+        max_player_potential_mobility = State.get_potential_mobility(game.get_board(), State.get_opponent(game))
+        min_player_potential_mobility = State.get_potential_mobility(game.get_board(), game.get_turn())
         
-        if max_player_moves + min_player_moves != 0:
-            return 100 * (max_player_moves - min_player_moves) / (max_player_moves + min_player_moves)
+        if max_player_potential_mobility + min_player_potential_mobility != 0:
+            return 100 * (max_player_potential_mobility - min_player_potential_mobility) / (max_player_potential_mobility + min_player_potential_mobility)
         else:
             return 0
     
@@ -123,7 +123,7 @@ class State:
         elif game.get_turn() == 'B':
             return 100 * (scores[1] - scores[0]) / (scores[1] + scores[0])
         
-        print("Error: get_coin_parity_score")
+        return 0
     
     @staticmethod
     def get_stability_score(game : OthelloGame):
@@ -206,6 +206,28 @@ class State:
             return 'W'
         else:
             return 'B'
+        
+    @staticmethod
+    def get_potential_mobility(board : list[list[str]], opponent : str) -> int:
+        """ Returns the number of potential mobility for a given turn """
+        potential_mobility = 0
+        for row in range(len(board)):
+            for col in range(len(board[row])):
+                if board[row][col] == NONE:
+                    potential_mobility += State.get_potential_mobility_for_cell(board, row, col, opponent)
+                    
+        return potential_mobility
+    
+    @staticmethod
+    def get_potential_mobility_for_cell(board : list[list[str]], row : int, col : int, opponent : str) -> int:
+        """ Returns the number of potential mobility for a given cell """
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x + row >= 0 and x + row < len(board) and y + col >= 0 and y + col < len(board[row]):
+                    if board[x + row][y + col] == opponent:
+                        return 1
+                        
+        return 0
 
     
 

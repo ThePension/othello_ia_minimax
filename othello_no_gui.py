@@ -2,6 +2,7 @@
 '''
 
 import importlib
+import threading
 import othello
 import othello_models_no_gui
 
