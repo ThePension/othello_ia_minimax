@@ -29,7 +29,7 @@ class Naive:
             tuple[int, int]: the next move (for instance: (2, 3) for (row, column), starting from 0)
         """
 
-        eval, move = self.minimax(State(game), 5, 1)
+        eval, move = self.minimax(State(game), 3, 1)
 
         return move
 

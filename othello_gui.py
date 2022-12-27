@@ -76,6 +76,7 @@ class OthelloGUI:
     def start(self) -> None:
         ''' Runs the mainloop of the root window '''
         self._root_window.mainloop()
+        
 
     def _configure_game_settings(self) -> None:
         ''' Pops out an options window to configure the game settings '''
@@ -93,6 +94,7 @@ class OthelloGUI:
 
     def _new_game(self) -> None:
         ''' Creates a new game with current _game_state settings '''
+        print("New Game")
         self._game_state = othello.OthelloGame(self._rows, self._columns,
                                                othello.BLACK)
         self._board.new_game_settings(self._game_state)
