@@ -7,8 +7,8 @@ import othello_models
 import tkinter
 
 # Default / Initial Game Settings
-DEFAULT_ROWS = 7
-DEFAULT_COLUMNS = 9
+DEFAULT_ROWS = 8
+DEFAULT_COLUMNS = 8
 
 # GUI Constants
 BACKGROUND_COLOR = othello_models.BACKGROUND_COLOR

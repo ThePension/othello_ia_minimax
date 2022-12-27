@@ -29,7 +29,7 @@ class Naive:
             tuple[int, int]: the next move (for instance: (2, 3) for (row, column), starting from 0)
         """
 
-        eval, move = self.minimax(State(game), 3, 1)
+        eval, move = self.minimax(State(game), 5, 1)
 
         return move
 
@@ -55,6 +55,8 @@ class State:
         self.game = game
 
     def eval(self) -> int:
+        if self.game.get_turn() == 'B':
+            return self.game.get_scores()[1]
         return self.game.get_scores()[0]
 
     def final(self):
