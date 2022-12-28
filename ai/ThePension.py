@@ -7,6 +7,12 @@ import random
 from othello import OthelloGame, NONE, BLACK, WHITE
 import sys
 
+# Sauces :
+# https://courses.cs.washington.edu/courses/cse573/04au/Project/mini1/RUSSIA/Final_Paper.pdf
+# https://stackoverflow.com/questions/12334216/othello-evaluation-function
+# https://skatgame.net/mburo/ps/evalfunc.pdf
+# https://github.com/kartikkukreja/blog-codes/blob/master/src/Heuristic%20Function%20for%20Reversi%20(Othello).cpp
+
 
 class ThePension:
     '''The name of this class must be the same as its file.
@@ -29,7 +35,7 @@ class ThePension:
             tuple[int, int]: the next move (for instance: (2, 3) for (row, column), starting from 0)
         """
 
-        eval, move = self.alphabeta(State(game, debug = False), 5, 1, 0)
+        eval, move = self.alphabeta(State(game, debug = False), 1, 1, 0)
 
         return move
 
@@ -60,7 +66,7 @@ class State:
         self.debug = debug
 
     def eval(self) -> int:
-        mobility = self.get_mobility_score(self.game) # Random
+        mobility = 0 # self.get_mobility_score(self.game) # Random
         coin_parity = self.get_coin_parity_score(self.game) # Pas mal
         stability = self.get_stability_score(self.game) # Vraiment pas mal
         corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
@@ -69,8 +75,6 @@ class State:
         
         if self.debug:
             print("--------------------")
-            # print(self.game.get_board())
-            print(self.game.get_turn())
             [print(row) for row in self.game.get_board()]
             print("Mobility: ", mobility)
             print("Coin parity: ", coin_parity)
@@ -109,10 +113,22 @@ class State:
         max_player_potential_mobility = State.get_potential_mobility(game.get_board(), State.get_opponent(game))
         min_player_potential_mobility = State.get_potential_mobility(game.get_board(), game.get_turn())
         
-        if max_player_potential_mobility + min_player_potential_mobility != 0:
-            return 100 * (max_player_potential_mobility - min_player_potential_mobility) / (max_player_potential_mobility + min_player_potential_mobility)
-        else:
-            return 0
+        # if max_player_potential_mobility + min_player_potential_mobility != 0:
+        #     return 100 * (max_player_potential_mobility - min_player_potential_mobility) / (max_player_potential_mobility + min_player_potential_mobility)
+        # else:
+        #     return 0
+        
+        if max_player_potential_mobility > min_player_potential_mobility:
+            return (100.0 * max_player_potential_mobility) / (max_player_potential_mobility + min_player_potential_mobility)
+        elif max_player_potential_mobility < min_player_potential_mobility:
+            return -(100.0 * min_player_potential_mobility) / (max_player_potential_mobility + min_player_potential_mobility)
+        
+        # if max_player_moves > min_player_moves:
+        #     return 100.0 * (max_player_moves - min_player_moves) / (max_player_moves + min_player_moves)
+        # elif max_player_moves < min_player_moves:
+        #     return -100.0 * (min_player_moves - max_player_moves) / (max_player_moves + min_player_moves)
+        
+        return 0
     
     @staticmethod
     def get_coin_parity_score(game : OthelloGame):
@@ -121,7 +137,7 @@ class State:
         if game.get_turn() == 'W':
             return 100 * (scores[0] - scores[1]) / (scores[0] + scores[1])
         elif game.get_turn() == 'B':
-            return 100 * (scores[1] - scores[0]) / (scores[1] + scores[0])
+            return -100 * (scores[1] - scores[0]) / (scores[1] + scores[0])
         
         return 0
     

@@ -8,7 +8,7 @@ def play_game():
 if __name__ == "__main__":
     pool = mp.Pool(mp.cpu_count())
     
-    results = pool.starmap(play_game, [() for i in range(16)])
+    results = [result for result in pool.starmap(play_game, [() for i in range(16)]) if result is not None]
     
     pool.close()
     
@@ -21,5 +21,5 @@ if __name__ == "__main__":
         elif result == 'W':
             white_wins += 1
             
-    print(f"Black wins: {black_wins / len(results) * 100}%")
-    print(f"White wins: {white_wins / len(results) * 100}%")
+    print(f"Black wins: {black_wins / len(results) * 100} %")
+    print(f"White wins: {white_wins / len(results) * 100} %")
