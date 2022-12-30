@@ -8,7 +8,7 @@ def play_game():
 if __name__ == "__main__":
     pool = mp.Pool(mp.cpu_count())
     
-    results = [result for result in pool.starmap(play_game, [() for i in range(16)]) if result is not None]
+    results = [result for result in pool.starmap(play_game, [() for i in range(1)]) if result is not None]
     
     pool.close()
     

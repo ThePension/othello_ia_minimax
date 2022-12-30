@@ -7,8 +7,8 @@ import othello
 import othello_models_no_gui
 
 # Default / Initial Game Settings
-DEFAULT_ROWS = 8
-DEFAULT_COLUMNS = 8
+DEFAULT_ROWS = 7
+DEFAULT_COLUMNS = 9
 
 class OthelloNoGUI:
     def __init__(self):
@@ -16,7 +16,7 @@ class OthelloNoGUI:
         self._rows = DEFAULT_ROWS
         self._columns = DEFAULT_COLUMNS
         self._black_name = "ThePension"
-        self._white_name = "Random"
+        self._white_name = "ThePension2"
         self._white_ai = None
         self._black_ai = None
 

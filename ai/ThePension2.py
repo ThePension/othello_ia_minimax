@@ -14,7 +14,7 @@ import sys
 # https://github.com/kartikkukreja/blog-codes/blob/master/src/Heuristic%20Function%20for%20Reversi%20(Othello).cpp
 
 
-class ThePension:
+class ThePension2:
     '''The name of this class must be the same as its file.
     
     '''
@@ -76,8 +76,8 @@ class State:
         mobility, coin_parity, control, corner_captured = 0, 0, 0, 0
         
         if game_state < 46: # Mid game
-            control = self.get_control_score(self.game) * 4 # Vraiment pas mal
-            # corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
+            # control = self.get_control_score(self.game) * 4 # Vraiment pas mal
+            corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
             
         else: # End game
             coin_parity = self.get_coin_parity_score(self.game) # Pas mal
