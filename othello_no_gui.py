@@ -16,7 +16,7 @@ class OthelloNoGUI:
         self._rows = DEFAULT_ROWS
         self._columns = DEFAULT_COLUMNS
         self._black_name = "ThePension"
-        self._white_name = "ThePension2"
+        self._white_name = "Random"
         self._white_ai = None
         self._black_ai = None
 

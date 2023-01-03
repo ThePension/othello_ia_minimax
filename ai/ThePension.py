@@ -75,12 +75,17 @@ class State:
         
         mobility, coin_parity, control, corner_captured = 0, 0, 0, 0
         
-        if game_state < 46: # Mid game
-            control = self.get_control_score(self.game) * 4 # Vraiment pas mal
-            # corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
+        # if game_state < 46: # Mid game
+        #     control = self.get_control_score(self.game) * 4 # Vraiment pas mal
+        #     corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
             
-        else: # End game
-            coin_parity = self.get_coin_parity_score(self.game) # Pas mal
+        # else: # End game
+        #     coin_parity = self.get_coin_parity_score(self.game) # Pas mal
+        
+        mobility = self.get_mobility_score(self.game) # Pas mal
+        corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
+        coin_parity = self.get_coin_parity_score(self.game) # Pas mal
+        control = self.get_control_score(self.game)# Vraiment pas mal        
         
         score = mobility + coin_parity + control + corner_captured
         
@@ -111,6 +116,19 @@ class State:
         new_game.move(row, col, False)
 
         return State(new_game, self.debug)
+    
+    @staticmethod
+    def get_mobility_score(game : OthelloGame):
+        min_player_moves = len(game.get_possible_move())
+        max_player_moves = len(State.get_possible_move(game, State.get_opponent(game)))
+        
+        # print("Max player moves: ", max_player_moves)
+        # print("Min player moves: ", min_player_moves)
+        
+        if max_player_moves + min_player_moves != 0:
+            return 100 * (max_player_moves - min_player_moves) / (max_player_moves + min_player_moves)
+        else:
+            return 0
     
     @staticmethod
     def map(x, in_min, in_max, out_min, out_max):
