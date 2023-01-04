@@ -70,29 +70,103 @@ class State:
         self.debug = debug
 
     def eval(self) -> int:
+        score_noir = 0
+        score_blanc = 0
         
-        game_state = self.game.get_scores()[0] + self.game.get_scores()[1]
-        
-        mobility, coin_parity, control, corner_captured = 0, 0, 0, 0
-        
-        if game_state < 46: # Mid game
-            # control = self.get_control_score(self.game) * 4 # Vraiment pas mal
-            corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
-            
-        else: # End game
-            coin_parity = self.get_coin_parity_score(self.game) # Pas mal
-        
-        score = mobility + coin_parity + control + corner_captured
-        
-        if self.debug:
-            print("--------------------")
-            [print(row) for row in self.game.get_board()]
-            print("Mobility: ", mobility)
-            print("Coin parity: ", coin_parity)
-            print("control: ", control)
-            print("Corner captured: ", corner_captured)
-            print("Score: ", score)
-            print("--------------------\n")
+        plateau = self.game.get_board()
+
+        # Compter le nombre de pions noirs et blancs sur le plateau
+        for ligne in plateau:
+            for case in ligne:
+                if case == 'B':
+                    score_noir += 1
+                elif case == 'W':
+                    score_blanc += 1
+
+        # Bonus de points pour les coins du plateau
+        if plateau[0][0] == 'B':
+            score_noir += 2
+        if plateau[0][8] == 'B':
+            score_noir += 2
+        if plateau[6][0] == 'B':
+            score_noir += 2
+        if plateau[6][8] == 'B':
+            score_noir += 2
+        if plateau[0][0] == 'W':
+            score_blanc += 2
+        if plateau[0][8] == 'W':
+            score_blanc += 2
+        if plateau[6][0] == 'W':
+            score_blanc += 2
+        if plateau[6][8] == 'W':
+            score_blanc += 2
+
+        # Bonus de points pour les cases proches des coins du plateau
+        if plateau[0][1] == 'B':
+            score_noir += 1
+        if plateau[1][0] == 'B':
+            score_noir += 1
+        if plateau[1][1] == 'B':
+            score_noir += 1
+        if plateau[0][7] == 'B':
+            score_noir += 1
+        if plateau[1][8] == 'B':
+            score_noir += 1
+        if plateau[1][7] == 'B':
+            score_noir += 1
+        if plateau[5][1] == 'B':
+            score_noir += 1
+        if plateau[6][1] == 'B':
+            score_noir += 1
+        if plateau[5][0] == 'B':
+            score_noir += 1
+        if plateau[6][7] == 'B':
+            score_noir += 1
+        if plateau[5][8] == 'B':
+            score_noir += 1
+        if plateau[5][7] == 'B':
+            score_noir += 1
+        if plateau[0][1] == 'W':
+            score_blanc += 1
+        if plateau[1][0] == 'W':
+            score_blanc += 1
+        if plateau[1][1] == 'W':
+            score_blanc += 1
+        if plateau[0][7] == 'W':
+            score_blanc += 1
+        if plateau[1][8] == 'W':
+            score_blanc += 1
+        if plateau[1][7] == 'W':
+            score_blanc += 1
+        if plateau[5][1] == 'W':
+            score_blanc += 1
+        if plateau[6][1] == 'W':
+            score_blanc += 1
+        if plateau[6][7] == 'W':
+            score_blanc += 1
+        if plateau[5][8] == 'W':
+            score_blanc += 1
+        if plateau[5][7] == 'W':
+            score_blanc += 1
+
+        # Bonus de points pour la stabilité des pions
+        for ligne in range(7):
+            for colonne in range(9):
+                if plateau[ligne][colonne] == 'B':
+                    score_noir += compter_pions_adjacent(plateau, ligne, colonne, 'B')
+                elif plateau[ligne][colonne] == 'W':
+                    score_blanc += compter_pions_adjacent(plateau, ligne, colonne, 'W')
+
+         # Bonus de points pour les coups spéciaux
+        coups_possibles_noir = State.get_possible_move(self.game, 'B') # obtenir_coups_possibles(plateau, 'B')
+        for ligne, colonne in coups_possibles_noir:
+            score_noir += compter_pions_retournes(plateau, ligne, colonne, 'B')
+        coups_possibles_blanc = State.get_possible_move(self.game, 'W') # obtenir_coups_possibles(plateau, 'W')
+        for ligne, colonne in coups_possibles_blanc:
+            score_blanc += compter_pions_retournes(plateau, ligne, colonne, 'W')
+
+        # Utiliser une heuristique de diffusion
+        score = (score_noir - score_blanc) / (score_noir + score_blanc)
 
         return score
 
@@ -103,7 +177,7 @@ class State:
     def ops(self) -> list[tuple[int, int]]:
         return self.game.get_possible_move()
 
-    def apply(self, op : list[list[str]]) -> ThePension:
+    def apply(self, op : list[list[str]]) -> ThePension2:
         new_game = self.game.copy_game()
 
         row, col = op
@@ -219,3 +293,71 @@ class State:
             return 'W'
         else:
             return 'B'
+        
+def compter_pions_adjacent(plateau, ligne, colonne, joueur):
+    nombre_pions_adjacent = 0
+    
+    # Vérifier les cases adjacentes en haut, en bas, à gauche et à droite
+    if ligne > 0 and plateau[ligne-1][colonne] == joueur:
+        nombre_pions_adjacent += 1
+    if ligne < 6 and plateau[ligne+1][colonne] == joueur:
+        nombre_pions_adjacent += 1
+    if colonne > 0 and plateau[ligne][colonne-1] == joueur:
+        nombre_pions_adjacent += 1
+    if colonne < 8 and plateau[ligne][colonne+1] == joueur:
+        nombre_pions_adjacent += 1
+    
+    return nombre_pions_adjacent
+
+def compter_pions_retournes(plateau, ligne, colonne, joueur):
+    pions_retournes = 0
+    
+    # Vérifier les cases adjacentes en haut, en bas, à gauche et à droite
+    if ligne > 0 and est_coup_valide(plateau, ligne-1, colonne, joueur):
+        pions_retournes += 1
+    if ligne < 6 and est_coup_valide(plateau, ligne+1, colonne, joueur):
+        pions_retournes += 1
+    if colonne > 0 and est_coup_valide(plateau, ligne, colonne-1, joueur):
+        pions_retournes += 1
+    if colonne < 8 and est_coup_valide(plateau, ligne, colonne+1, joueur):
+        pions_retournes += 1
+    
+    return pions_retournes
+
+def est_coup_valide(plateau, ligne, colonne, joueur):
+    # Le coup n'est pas valide si la case est déjà occupée
+    if plateau[ligne][colonne] != ' ':
+        return False
+    
+    # Vérifier les cases adjacentes en haut, en bas, à gauche et à droite
+    if ligne > 0 and plateau[ligne-1][colonne] == adversaire(joueur):
+        if est_direction_valide(plateau, ligne, colonne, 0, -1, joueur):
+            return True
+    if ligne < 6 and plateau[ligne+1][colonne] == adversaire(joueur):
+        if est_direction_valide(plateau, ligne, colonne, 0, 1, joueur):
+            return True
+    if colonne > 0 and plateau[ligne][colonne-1] == adversaire(joueur):
+        if est_direction_valide(plateau, ligne, colonne, -1, 0, joueur):
+            return True
+    if colonne < 8 and plateau[ligne][colonne+1] == adversaire(joueur):
+        if est_direction_valide(plateau, ligne, colonne, 1, 0, joueur):
+            return True
+    
+    return False
+
+def est_direction_valide(plateau, ligne, colonne, direction_ligne, direction_colonne, joueur):
+    ligne += direction_ligne
+    colonne += direction_colonne
+    while 0 <= ligne <= 6 and 0 <= colonne <= 8:
+        if plateau[ligne][colonne] == joueur:
+            return True
+        if plateau[ligne][colonne] == ' ':
+            return False
+        ligne += direction_ligne
+        colonne += direction_colonne
+    return False
+
+def adversaire(joueur):
+    if joueur == 'N':
+        return 'W'
+    return 'N'

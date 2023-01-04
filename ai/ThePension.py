@@ -73,28 +73,23 @@ class State:
         
         game_state = self.game.get_scores()[0] + self.game.get_scores()[1]
         
-        mobility, coin_parity, control, corner_captured = 0, 0, 0, 0
+        mobility, pieces_control, board_control, corner_captured = 0, 0, 0, 0
         
-        # if game_state < 46: # Mid game
-        #     control = self.get_control_score(self.game) * 4 # Vraiment pas mal
-        #     corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
+        if game_state < 46: # Mid game
+            board_control = self.get_board_control_score(self.game) * 4
+            corner_captured = self.get_corner_captures_score(self.game)
             
-        # else: # End game
-        #     coin_parity = self.get_coin_parity_score(self.game) # Pas mal
+        else: # End game
+            pieces_control = self.get_pieces_control_score(self.game) # Pas mal     
         
-        mobility = self.get_mobility_score(self.game) # Pas mal
-        corner_captured = self.get_corner_captures_score(self.game) # Vraiment pas mal
-        coin_parity = self.get_coin_parity_score(self.game) # Pas mal
-        control = self.get_control_score(self.game)# Vraiment pas mal        
-        
-        score = mobility + coin_parity + control + corner_captured
+        score = mobility + pieces_control + board_control + corner_captured
         
         if self.debug:
             print("--------------------")
             [print(row) for row in self.game.get_board()]
             print("Mobility: ", mobility)
-            print("Coin parity: ", coin_parity)
-            print("control: ", control)
+            print("Coin control: ", pieces_control)
+            print("Board control: ", board_control)
             print("Corner captured: ", corner_captured)
             print("Score: ", score)
             print("--------------------\n")
@@ -122,9 +117,6 @@ class State:
         min_player_moves = len(game.get_possible_move())
         max_player_moves = len(State.get_possible_move(game, State.get_opponent(game)))
         
-        # print("Max player moves: ", max_player_moves)
-        # print("Min player moves: ", min_player_moves)
-        
         if max_player_moves + min_player_moves != 0:
             return 100 * (max_player_moves - min_player_moves) / (max_player_moves + min_player_moves)
         else:
@@ -135,7 +127,7 @@ class State:
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
     
     @staticmethod
-    def get_coin_parity_score(game : OthelloGame):
+    def get_pieces_control_score(game : OthelloGame):
         scores = game.get_scores()
         
         if game.get_turn() == 'W':
@@ -146,7 +138,7 @@ class State:
         return 0
     
     @staticmethod
-    def get_control_score(game : OthelloGame):
+    def get_board_control_score(game : OthelloGame):
         max_player_control_value = 0
         min_player_control_value = 0
         board = game.get_board()
